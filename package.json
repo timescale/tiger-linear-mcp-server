@@ -19,7 +19,10 @@
     "watch:http": "tsx watch src/index.ts http",
     "start": "node dist/index.js stdio",
     "start:http": "node dist/index.js http",
-    "inspector": "npx @modelcontextprotocol/inspector"
+    "inspector": "npx @modelcontextprotocol/inspector",
+    "lint": "eslint src --ext .ts,.js,.mjs",
+    "lint:fix": "eslint src --ext .ts,.js,.mjs --fix",
+    "lint:check": "eslint src --ext .ts,.js,.mjs --max-warnings 0"
   },
   "dependencies": {
     "@linear/sdk": "^56.0.0",
@@ -43,7 +46,11 @@
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^22.16.4",
+    "@typescript-eslint/eslint-plugin": "^8.8.0",
+    "@typescript-eslint/parser": "^8.8.0",
     "ai": "^5.0.17",
+    "eslint": "^9.12.0",
+    "eslint-plugin-import": "^2.31.0",
     "prettier": "^3.6.2",
     "shx": "^0.4.0",
     "tsx": "^4.20.4",
