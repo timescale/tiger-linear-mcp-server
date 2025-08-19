@@ -7,8 +7,8 @@ export const zProject = z.object({
   description: z.string().describe('The description of the project'),
   content: z.string().optional().describe('The content of the project'),
   priority: z.string().describe('The priority label of the project'),
-  startDate: z.string().describe('The start date of the project'),
-  targetDate: z.string().describe('The target date of the project'),
+  startDate: z.string().optional().describe('The start date of the project'),
+  targetDate: z.string().optional().describe('The target date of the project'),
 });
 
 export type Project = z.infer<typeof zProject>;
