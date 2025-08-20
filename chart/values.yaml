@@ -35,3 +35,7 @@ logfire:
 instrumentation:
   otlpEndpoint: http://tracing-collector:4317
   enabled: false
+
+tailscale:
+  authkey: ''
+  tailnet: tail9d164.ts.net
