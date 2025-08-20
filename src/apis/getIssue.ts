@@ -7,6 +7,11 @@ import { getWorkflowState } from '../utils/workflowState.js';
 import { getProject, zProject } from '../utils/project.js';
 import { simplifyComment, zComment, Comment } from '../utils/comment.js';
 import { getIssueLabel } from '../utils/issueLabel.js';
+import {
+  Attachment,
+  simplifyAttachment,
+  zAttachment,
+} from '../utils/attachment.js';
 
 const inputSchema = {
   key: z.string().min(1).describe('The issue key, like ABC-123'),
@@ -31,6 +36,7 @@ const outputSchema = {
     team: z.string().nullable(),
     title: z.string(),
     url: z.string(),
+    attachments: z.array(zAttachment),
   }),
   involvedUsers: z.array(zUser),
 } as const;
@@ -74,6 +80,10 @@ export const getIssueFactory: ApiFactory<
       )
     ).filter((u): u is User => !!u);
 
+    const attachmentsConnection = await issue.attachments();
+    const attachments =
+      attachmentsConnection.nodes.map<Attachment>(simplifyAttachment);
+
     return {
       issue: {
         assignee: issue.assigneeId,
@@ -97,6 +107,7 @@ export const getIssueFactory: ApiFactory<
         team: await getTeam(linear, issue.teamId),
         title: issue.title,
         url: issue.url,
+        attachments,
       },
       involvedUsers,
     };
