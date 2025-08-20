@@ -65,7 +65,7 @@ spec:
             - name: LINEAR_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: tiger-linear-mcp-server-linear
+                  name: {{ .Values.name }}-linear
                   key: token
             - name: OTEL_SERVICE_NAME
               value: {{ .Values.name }}
@@ -78,5 +78,5 @@ spec:
             - name: LOGFIRE_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: tiger-linear-mcp-server-logfire
+                  name: {{ .Values.name }}-logfire
                   key: token
