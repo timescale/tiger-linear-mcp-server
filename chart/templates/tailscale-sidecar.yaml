@@ -82,13 +82,6 @@ data:
             }
           }
         },
-        "{{ .Values.name }}:443": {
-          "Handlers": {
-            "/": {
-              "Proxy": "http://{{ .Values.name }}:80"
-            }
-          }
-        },
         "{{ .Values.name }}:80": {
           "Handlers": {
             "/": {
