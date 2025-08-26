@@ -2,7 +2,9 @@ import { LinearClient } from '@linear/sdk';
 import { ServerContext } from './types.js';
 import { Store } from './utils/store.js';
 import { User } from './utils/user.js';
+import { Project } from './utils/project.js';
 import { getUsers } from './utils/getUsers.js';
+import { getProjects } from './utils/getProjects.js';
 
 export const serverInfo = {
   name: 'tiger-linear',
@@ -19,5 +21,6 @@ const linear = new LinearClient({
 });
 
 const userStore = new Store<User>({ fetch: () => getUsers(linear) });
+const projectStore = new Store<Project>({ fetch: () => getProjects(linear) });
 
-export const context: ServerContext = { linear, userStore };
+export const context: ServerContext = { linear, userStore, projectStore };
