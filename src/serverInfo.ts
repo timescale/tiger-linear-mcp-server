@@ -1,5 +1,8 @@
 import { LinearClient } from '@linear/sdk';
 import { ServerContext } from './types.js';
+import { Store } from './utils/store.js';
+import { User } from './utils/user.js';
+import { getUsers } from './utils/getUsers.js';
 
 export const serverInfo = {
   name: 'tiger-linear',
@@ -15,4 +18,6 @@ const linear = new LinearClient({
   apiKey,
 });
 
-export const context: ServerContext = { linear };
+const userStore = new Store<User>({ fetch: () => getUsers(linear) });
+
+export const context: ServerContext = { linear, userStore };
