@@ -4,40 +4,18 @@ import { ServerContext } from '../types.js';
 import { getUser, User, zUser } from '../utils/user.js';
 import { getTeam } from '../utils/team.js';
 import { getWorkflowState } from '../utils/workflowState.js';
-import { getProject, zProject } from '../utils/project.js';
-import { simplifyComment, zComment, Comment } from '../utils/comment.js';
+import { getProject } from '../utils/project.js';
+import { simplifyComment, Comment } from '../utils/comment.js';
 import { getIssueLabel } from '../utils/issueLabel.js';
-import {
-  Attachment,
-  simplifyAttachment,
-  zAttachment,
-} from '../utils/attachment.js';
+import { Attachment, simplifyAttachment } from '../utils/attachment.js';
+import { zIssue } from '../utils/issue.js';
 
 const inputSchema = {
   key: z.string().min(1).describe('The issue key, like ABC-123'),
 } as const;
 
 const outputSchema = {
-  issue: z.object({
-    assignee: z.string().optional(),
-    comments: z.array(zComment),
-    createdAt: z.string(),
-    creator: z.string().optional(),
-    description: z.string(),
-    dueDate: z.string().nullable(),
-    estimate: z.string().nullable(),
-    id: z.string(),
-    identifier: z.string(),
-    labels: z.array(z.string()),
-    parentId: z.string().optional(),
-    priority: z.string(),
-    project: zProject.nullable(),
-    state: z.string().nullable(),
-    team: z.string().nullable(),
-    title: z.string(),
-    url: z.string(),
-    attachments: z.array(zAttachment),
-  }),
+  issue: zIssue,
   involvedUsers: z.array(zUser),
 } as const;
 
