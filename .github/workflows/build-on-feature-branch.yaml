@@ -5,16 +5,15 @@ on:
       - main
 
 jobs:
-  release:
-    name: Build Docker
-    uses: timescale/cloud-actions/.github/workflows/build.yaml@main
-    with:
-      tags: |
-        auto-${{ github.sha }}
-      registry: 142548018081.dkr.ecr.us-east-1.amazonaws.com/tiger-linear-mcp-server
-      dockerfile_path: ./Dockerfile
-      skip-scan: true
-    secrets:
-      API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.ORG_AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.ORG_AWS_SECRET_ACCESS_KEY }}
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch Workflow
+        uses: timescale/workflow-dispatch-action@main
+        with:
+          github-token: ${{ secrets.ORG_GITHUB_AGENTS_TOKEN }}
+          owner: timescale
+          repo: tiger-agents-deploy
+          workflow_id: build.yaml
+          ref: 'main'
+          inputs: '{"repository": "tiger-linear-mcp-server", "sha": "${{ github.sha }}"}'
