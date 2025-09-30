@@ -16,7 +16,12 @@ jobs:
           repo: tiger-agents-deploy
           workflow_id: build.yaml
           ref: 'main'
-          inputs: '{"repository": "tiger-linear-mcp-server", "sha": "${{ github.sha }}"}'
+          inputs: >
+            {
+              "repository": "tiger-linear-mcp-server",
+              "sha": "${{ github.sha }}",
+              "latest": true
+            }
 
   deploy:
     runs-on: ubuntu-latest
@@ -30,7 +35,11 @@ jobs:
           repo: tiger-agents-deploy
           workflow_id: deploy.yaml
           ref: 'main'
-          inputs: '{"repository": "tiger-linear-mcp-server", "sha": "${{ github.sha }}"}'
+          inputs: >
+            {
+              "repository": "tiger-linear-mcp-server",
+              "sha": "${{ github.sha }}"
+            }
 
   # send-release-message:
   #   runs-on: ubuntu-latest
