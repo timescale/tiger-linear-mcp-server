@@ -1,6 +1,6 @@
 # Tiger Linear MCP Server
 
-A wrapper around the Linear API to provide some focused tools to LLMs via the [Model Context Protocol](https://modelcontextprotocol.io/introduction).
+A wrapper around the [Linear](https://linear.app/) API to provide some focused tools to LLMs via the [Model Context Protocol](https://modelcontextprotocol.io/introduction).
 
 ## Development
 
@@ -22,7 +22,7 @@ cp .env.sample .env
 
 ### Testing
 
-The MCP Inspector is very handy.
+The MCP Inspector is a very handy to exercise the MCP server from a web-based UI.
 
 ```bash
 npx @modelcontextprotocol/inspector
@@ -54,30 +54,3 @@ Create/edit the file `~/Library/Application Support/Claude/claude_desktop_config
   }
 }
 ```
-
-## Deployment
-
-We use a Helm chart to deploy to Kubernetes. See the `chart/` directory for details.
-
-### Secrets
-
-Run the following to create a sealed secret for the various credentials. Be sure to fill in the correct values.
-
-```bash
-kubectl -n savannah-system create secret generic tiger-linear-mcp-server-linear \
-  --dry-run=client \
-  --from-literal=token="lin_api_" \
-  -o yaml | kubeseal -o yaml
-
-kubectl -n savannah-system create secret generic tiger-linear-mcp-server-logfire \
-  --dry-run=client \
-  --from-literal=token="pylf_v1_us_" \
-  -o yaml | kubeseal -o yaml
-
-kubectl -n savannah-system create secret generic tiger-linear-mcp-server-tailscale \
-  --dry-run=client \
-  --from-literal=authkey="tskey-auth-" \
-  -o yaml | kubeseal -o yaml
-```
-
-Update `./chart/values/dev.yaml` with the output.
