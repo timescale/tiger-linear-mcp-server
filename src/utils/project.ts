@@ -13,7 +13,9 @@ export const zProject = z.object({
 
 export type Project = z.infer<typeof zProject>;
 
-const simplifyProject = (project?: LinearProject | null): Project | null =>
+export const simplifyProject = (
+  project?: LinearProject | null,
+): Project | null =>
   project
     ? {
         id: project.id,

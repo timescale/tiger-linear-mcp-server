@@ -17,12 +17,6 @@ const outputSchema = {
   users: z.array(zUser),
 } as const;
 
-const getKeywordPredicate = (keyword: string): ((user: User) => boolean) => {
-  const normalizedKeyword = keyword.toLowerCase();
-
-  return (user) => user.displayName.toLowerCase() === normalizedKeyword;
-};
-
 export const getUsersFactory: ApiFactory<
   ServerContext,
   typeof inputSchema,
@@ -37,11 +31,22 @@ export const getUsersFactory: ApiFactory<
     inputSchema,
     outputSchema,
   },
-  fn: async (keyword) => {
+  fn: async ({ keyword }) => {
     const allUsers = await userStore.get();
-
     return {
-      users: keyword ? allUsers.where((x) => x) : allUsers,
+      users: keyword
+        ? allUsers.filter((user: User) => {
+            const normalizedKeyword = keyword.toLowerCase();
+            const { displayName, name, email, id } = user;
+
+            return (
+              displayName.toLowerCase().includes(normalizedKeyword) ||
+              name.toLowerCase().includes(normalizedKeyword) ||
+              email.toLowerCase().includes(normalizedKeyword) ||
+              id.toLowerCase().includes(normalizedKeyword)
+            );
+          })
+        : allUsers,
     };
   },
 });
