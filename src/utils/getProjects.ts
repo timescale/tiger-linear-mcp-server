@@ -1,11 +1,8 @@
-import type { LinearClient } from '@linear/sdk';
+import type { LinearClient, Project as LinearProject } from '@linear/sdk';
 import { Project, simplifyProject } from './project.js';
+import { fetchAll } from './linear.js';
 
 export const getProjects = async (linear: LinearClient): Promise<Project[]> => {
-  let response = await linear.projects();
-  while (response.pageInfo.hasNextPage) {
-    response = await response.fetchNext();
-  }
-
-  return response.nodes.map((project) => simplifyProject(project) as Project);
+  const linearProjects = await fetchAll(() => linear.projects());
+  return linearProjects.map((project) => simplifyProject(project) as Project);
 };
