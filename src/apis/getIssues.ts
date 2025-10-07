@@ -42,7 +42,7 @@ export const getIssuesFactory: ApiFactory<
   fn: async ({ user_id, project_id, updated_after }) => {
     const result = await getIssues(linear, {
       userId: user_id,
-      projectId: project_id || undefined,
+      projectId: project_id,
       updatedAfter: updated_after,
     });
 
