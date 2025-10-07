@@ -7,6 +7,7 @@ import { simplifyComment, Comment, zComment } from './comment.js';
 import { getIssueLabel } from './issueLabel.js';
 import { simplifyAttachment, Attachment, zAttachment } from './attachment.js';
 import z from 'zod';
+import { fetchAll } from './linear.js';
 
 export const zIssue = z.object({
   assignee: z.string().optional(),
@@ -31,8 +32,9 @@ export const zIssue = z.object({
 export type Issue = z.infer<typeof zIssue>;
 
 export interface IssueFilters {
-  userId?: string;
-  projectId?: string;
+  userId: string | null;
+  projectId: string | null;
+  updatedAfter: string;
 }
 
 export interface GetIssuesResult {
@@ -42,41 +44,24 @@ export interface GetIssuesResult {
 
 export const getIssues = async (
   linear: LinearClient,
-  filters: IssueFilters = {},
+  filters: IssueFilters,
 ): Promise<GetIssuesResult> => {
-  let issuesConnection;
+  const { userId, projectId, updatedAfter } = filters;
 
-  if (filters.userId && filters.projectId) {
-    // Filter by both user and project
-    issuesConnection = await linear.issues({
+  const linearIssues = await fetchAll(() =>
+    linear.issues({
       filter: {
-        assignee: { id: { eq: filters.userId } },
-        project: { id: { eq: filters.projectId } },
+        ...(userId ? { assignee: { id: { eq: userId } } } : {}),
+        ...(projectId ? { project: { id: { eq: projectId } } } : {}),
+        updatedAt: { gte: updatedAfter },
       },
-    });
-  } else if (filters.userId) {
-    // Filter by user only
-    issuesConnection = await linear.issues({
-      filter: {
-        assignee: { id: { eq: filters.userId } },
-      },
-    });
-  } else if (filters.projectId) {
-    // Filter by project only
-    issuesConnection = await linear.issues({
-      filter: {
-        project: { id: { eq: filters.projectId } },
-      },
-    });
-  } else {
-    // No filters - get all issues
-    issuesConnection = await linear.issues();
-  }
+    }),
+  );
 
   const issues: Issue[] = [];
   const involvedUserIds = new Set<string>();
 
-  for (const issue of issuesConnection.nodes) {
+  for (const issue of linearIssues) {
     if (issue.assigneeId) {
       involvedUserIds.add(issue.assigneeId);
     }
