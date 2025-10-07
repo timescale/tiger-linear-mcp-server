@@ -5,7 +5,7 @@ import { User } from './utils/user.js';
 import { Project } from './utils/project.js';
 import { getUsers } from './utils/getUsers.js';
 import { getProjects } from './utils/getProjects.js';
-import { log } from './shared/boilerplate/src/logger.js';
+import { log } from '@tigerdata/mcp-boilerplate';
 
 export const serverInfo = {
   name: 'tiger-linear',

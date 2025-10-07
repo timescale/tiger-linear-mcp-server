@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { ApiFactory } from '../shared/boilerplate/src/types.js';
 import { ServerContext } from '../types.js';
 import { zUser } from '../utils/user.js';
 import { getIssues, zIssue } from '../utils/issue.js';
+import { ApiFactory } from '@tigerdata/mcp-boilerplate';
 
 const inputSchema = {
   user_id: z.string().optional().describe('Filter issues by assignee user ID'),

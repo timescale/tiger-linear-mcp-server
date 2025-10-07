@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ApiFactory } from '../shared/boilerplate/src/types.js';
+import { ApiFactory } from '@tigerdata/mcp-boilerplate';
 import { ServerContext } from '../types.js';
 import { User, zUser } from '../utils/user.js';
 
@@ -19,7 +19,8 @@ const outputSchema = {
 
 const getKeywordPredicate = (keyword: string): ((user: User) => boolean) => {
   const normalizedKeyword = keyword.toLowerCase();
-  return (user) => user.displayName.toLowerCase();
+
+  return (user) => user.displayName.toLowerCase() === normalizedKeyword;
 };
 
 export const getUsersFactory: ApiFactory<
