@@ -22,7 +22,7 @@ export const getUsersFactory: ApiFactory<
   typeof inputSchema,
   typeof outputSchema
 > = ({ userStore }) => ({
-  name: 'getUsers',
+  name: 'get_users',
   method: 'get',
   route: '/users',
   config: {

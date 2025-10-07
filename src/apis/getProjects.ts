@@ -14,7 +14,7 @@ export const getProjectsFactory: ApiFactory<
   typeof inputSchema,
   typeof outputSchema
 > = ({ projectStore }) => ({
-  name: 'getProjects',
+  name: 'get_projects',
   method: 'get',
   route: '/projects',
   config: {

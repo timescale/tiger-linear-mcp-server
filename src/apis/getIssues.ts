@@ -19,7 +19,7 @@ export const getIssuesFactory: ApiFactory<
   typeof inputSchema,
   typeof outputSchema
 > = ({ linear }) => ({
-  name: 'getIssues',
+  name: 'get_issues',
   method: 'get',
   route: '/issues',
   config: {
