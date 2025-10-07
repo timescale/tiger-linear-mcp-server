@@ -1,9 +1,17 @@
 import { z } from 'zod';
 import { ServerContext } from '../types.js';
-import { zProject } from '../utils/project.js';
+import { Project, zProject } from '../utils/project.js';
 import { ApiFactory } from '@tigerdata/mcp-boilerplate';
 
-const inputSchema = {} as const;
+const inputSchema = {
+  keyword: z
+    .string()
+    .min(0)
+    .nullable()
+    .describe(
+      'Keyword to use to find partial matches on project. Will return projects whose id (e.g. ab5d27fb-e6f5-417b-84a7-91f9aa2a5fc5), name, description, or content contain the given keyword. This is case insensitive.',
+    ),
+} as const;
 
 const outputSchema = {
   projects: z.array(zProject),
@@ -23,11 +31,23 @@ export const getProjectsFactory: ApiFactory<
     inputSchema,
     outputSchema,
   },
-  fn: async () => {
-    const projects = await projectStore.get();
+  fn: async ({ keyword }) => {
+    const allProjects = await projectStore.get();
 
     return {
-      projects,
+      projects: keyword
+        ? allProjects.filter((project: Project) => {
+            const normalizedKeyword = keyword.toLowerCase();
+            const { content, id, name, description } = project;
+
+            return (
+              content?.toLowerCase().includes(normalizedKeyword) ||
+              id.toLowerCase().includes(normalizedKeyword) ||
+              name.toLowerCase().includes(normalizedKeyword) ||
+              description.toLowerCase().includes(normalizedKeyword)
+            );
+          })
+        : allProjects,
     };
   },
 });
