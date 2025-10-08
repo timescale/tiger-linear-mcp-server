@@ -90,7 +90,7 @@ export const getIssues = async (
       creator: issue.creatorId,
       description: issue.description || '',
       dueDate: issue.dueDate ? issue.dueDate.toISOString() : null,
-      estimate: issue.estimate ? issue.estimate.toString() : null,
+      estimate: issue.estimate ? issue.estimate : null,
       id: issue.id,
       identifier: issue.identifier,
       labels: (
