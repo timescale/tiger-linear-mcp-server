@@ -69,8 +69,8 @@ export const getIssueFactory: ApiFactory<
         createdAt: issue.createdAt.toISOString(),
         creator: issue.creatorId,
         description: issue.description || '',
-        dueDate: issue.dueDate ? issue.dueDate.toISOString() : null,
-        estimate: issue.estimate ? issue.estimate.toString() : null,
+        dueDate: (issue.dueDate as string) || null,
+        estimate: (issue.estimate as number) || null,
         id: issue.id,
         identifier: issue.identifier,
         labels: (

@@ -16,7 +16,7 @@ export const zIssue = z.object({
   creator: z.string().optional(),
   description: z.string(),
   dueDate: z.string().nullable(),
-  estimate: z.string().nullable(),
+  estimate: z.number().nullable(),
   id: z.string(),
   identifier: z.string(),
   labels: z.array(z.string()),
