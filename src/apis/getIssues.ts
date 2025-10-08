@@ -3,6 +3,7 @@ import { ServerContext } from '../types.js';
 import { zUser } from '../utils/user.js';
 import { getIssues, zIssue } from '../utils/issue.js';
 import { ApiFactory } from '@tigerdata/mcp-boilerplate';
+import { getDateTimeFromDaysAgo } from '../utils/date.js';
 
 const inputSchema = {
   user_id: z.string().nullable().describe('Filter issues by assignee user ID'),
@@ -10,14 +11,10 @@ const inputSchema = {
   updated_after: z
     .string()
     .datetime()
+    .nullable()
     .describe(
-      'Filter issues that have been updated at or after this date (ISO 8601 format).',
-    )
-    .default(() => {
-      const date = new Date();
-      date.setDate(date.getDate() - 5);
-      return date.toISOString();
-    }),
+      'Filter issues that have been updated at or after this date (ISO 8601 format). Defaults to 7 days ago.',
+    ),
 } as const;
 
 const outputSchema = {
@@ -43,7 +40,7 @@ export const getIssuesFactory: ApiFactory<
     const result = await getIssues(linear, {
       userId: user_id,
       projectId: project_id,
-      updatedAfter: updated_after,
+      updatedAfter: updated_after || getDateTimeFromDaysAgo(7),
     });
 
     return result;
