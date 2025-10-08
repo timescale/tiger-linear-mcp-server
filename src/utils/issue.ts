@@ -55,6 +55,7 @@ export const getIssues = async (
         ...(projectId ? { project: { id: { eq: projectId } } } : {}),
         updatedAt: { gte: updatedAfter },
       },
+      first: 250,
     }),
   );
 
