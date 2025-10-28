@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@linear/sdk": "^56.0.0",
-    "@tigerdata/mcp-boilerplate": "^0.2.0",
+    "@tigerdata/mcp-boilerplate": "^0.4.0",
     "dotenv": "^17.2.0",
     "zod": "^3.23.8"
   },
