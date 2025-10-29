@@ -1,4 +1,4 @@
-import type { LinearClient } from '@linear/sdk';
+import type { LinearClient, Issue as LinearIssue } from '@linear/sdk';
 import { getUser, User } from './user.js';
 import { getTeam } from './team.js';
 import { getWorkflowState } from './workflowState.js';
@@ -63,48 +63,7 @@ export const getIssues = async (
   const involvedUserIds = new Set<string>();
 
   for (const issue of linearIssues) {
-    if (issue.assigneeId) {
-      involvedUserIds.add(issue.assigneeId);
-    }
-    if (issue.creatorId) {
-      involvedUserIds.add(issue.creatorId);
-    }
-
-    const commentsConnection = await issue.comments();
-    const comments: Comment[] = [];
-    for (const c of commentsConnection.nodes) {
-      if (c.userId) {
-        involvedUserIds.add(c.userId);
-      }
-      comments.push(simplifyComment(c));
-    }
-
-    const attachmentsConnection = await issue.attachments();
-    const attachments =
-      attachmentsConnection.nodes.map<Attachment>(simplifyAttachment);
-
-    issues.push({
-      assignee: issue.assigneeId,
-      comments,
-      createdAt: issue.createdAt.toISOString(),
-      creator: issue.creatorId,
-      description: issue.description || '',
-      dueDate: issue.dueDate ? issue.dueDate.toISOString() : null,
-      estimate: issue.estimate ? issue.estimate : null,
-      id: issue.id,
-      identifier: issue.identifier,
-      labels: (
-        await Promise.all(issue.labelIds.map((id) => getIssueLabel(linear, id)))
-      ).filter((label): label is string => !!label),
-      parentId: issue.parentId,
-      priority: issue.priorityLabel,
-      project: await getProject(linear, issue.projectId),
-      state: await getWorkflowState(linear, issue.stateId),
-      team: await getTeam(linear, issue.teamId),
-      title: issue.title,
-      url: issue.url,
-      attachments,
-    });
+    issues.push(await simplifyIssue(linear, involvedUserIds, issue));
   }
 
   const involvedUsers = (
@@ -116,5 +75,58 @@ export const getIssues = async (
   return {
     issues,
     involvedUsers,
+  };
+};
+
+export const simplifyIssue = async (
+  linear: LinearClient,
+  involvedUserIds: Set<string>,
+  issue: LinearIssue,
+): Promise<Issue> => {
+  if (issue.assigneeId) {
+    involvedUserIds.add(issue.assigneeId);
+  }
+  if (issue.creatorId) {
+    involvedUserIds.add(issue.creatorId);
+  }
+
+  const commentsConnection = await issue.comments();
+  const comments: Comment[] = [];
+  for (const c of commentsConnection.nodes) {
+    if (c.userId) {
+      involvedUserIds.add(c.userId);
+    }
+    comments.push(simplifyComment(c));
+  }
+
+  const attachmentsConnection = await issue.attachments();
+  const attachments =
+    attachmentsConnection.nodes.map<Attachment>(simplifyAttachment);
+
+  return {
+    assignee: issue.assigneeId,
+    comments,
+    createdAt: issue.createdAt.toISOString(),
+    creator: issue.creatorId,
+    description: issue.description || '',
+    dueDate: issue.dueDate
+      ? issue.dueDate instanceof Date
+        ? issue.dueDate.toISOString()
+        : issue.dueDate.toString()
+      : null,
+    estimate: issue.estimate ? issue.estimate : null,
+    id: issue.id,
+    identifier: issue.identifier,
+    labels: (
+      await Promise.all(issue.labelIds.map((id) => getIssueLabel(linear, id)))
+    ).filter((label): label is string => !!label),
+    parentId: issue.parentId,
+    priority: issue.priorityLabel,
+    project: await getProject(linear, issue.projectId),
+    state: await getWorkflowState(linear, issue.stateId),
+    team: await getTeam(linear, issue.teamId),
+    title: issue.title,
+    url: issue.url,
+    attachments,
   };
 };

@@ -8,7 +8,7 @@ import { getProject } from '../utils/project.js';
 import { simplifyComment, Comment } from '../utils/comment.js';
 import { getIssueLabel } from '../utils/issueLabel.js';
 import { Attachment, simplifyAttachment } from '../utils/attachment.js';
-import { zIssue } from '../utils/issue.js';
+import { simplifyIssue, zIssue } from '../utils/issue.js';
 
 const inputSchema = {
   key: z.string().min(1).describe('The issue key, like ABC-123'),
@@ -34,23 +34,9 @@ export const getIssueFactory: ApiFactory<
     outputSchema,
   },
   fn: async ({ key }) => {
-    const issue = await linear.issue(key);
+    const rawIssue = await linear.issue(key);
     let involvedUserIds = new Set<string>();
-    if (issue.assigneeId) {
-      involvedUserIds.add(issue.assigneeId);
-    }
-    if (issue.creatorId) {
-      involvedUserIds.add(issue.creatorId);
-    }
-
-    const commentsConnection = await issue.comments();
-    const comments: Comment[] = [];
-    for (const c of commentsConnection.nodes) {
-      if (c.userId) {
-        involvedUserIds.add(c.userId);
-      }
-      comments.push(simplifyComment(c));
-    }
+    const issue = await simplifyIssue(linear, involvedUserIds, rawIssue);
 
     const involvedUsers = (
       await Promise.all(
@@ -58,35 +44,8 @@ export const getIssueFactory: ApiFactory<
       )
     ).filter((u): u is User => !!u);
 
-    const attachmentsConnection = await issue.attachments();
-    const attachments =
-      attachmentsConnection.nodes.map<Attachment>(simplifyAttachment);
-
     return {
-      issue: {
-        assignee: issue.assigneeId,
-        comments,
-        createdAt: issue.createdAt.toISOString(),
-        creator: issue.creatorId,
-        description: issue.description || '',
-        dueDate: (issue.dueDate as string) || null,
-        estimate: (issue.estimate as number) || null,
-        id: issue.id,
-        identifier: issue.identifier,
-        labels: (
-          await Promise.all(
-            issue.labelIds.map((id) => getIssueLabel(linear, id)),
-          )
-        ).filter((label): label is string => !!label),
-        parentId: issue.parentId,
-        priority: issue.priorityLabel,
-        project: await getProject(linear, issue.projectId),
-        state: await getWorkflowState(linear, issue.stateId),
-        team: await getTeam(linear, issue.teamId),
-        title: issue.title,
-        url: issue.url,
-        attachments,
-      },
+      issue,
       involvedUsers,
     };
   },
