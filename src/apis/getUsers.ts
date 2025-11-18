@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ApiFactory } from '@tigerdata/mcp-boilerplate';
+import { ApiFactory, InferSchema } from '@tigerdata/mcp-boilerplate';
 import { ServerContext } from '../types.js';
 import { User, zUser } from '../utils/user.js';
 
@@ -31,7 +31,7 @@ export const getUsersFactory: ApiFactory<
     inputSchema,
     outputSchema,
   },
-  fn: async ({ keyword }) => {
+  fn: async ({ keyword }): Promise<InferSchema<typeof outputSchema>> => {
     const allUsers = await userStore.get();
     return {
       users: keyword

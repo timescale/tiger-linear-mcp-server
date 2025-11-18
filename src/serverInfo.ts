@@ -25,11 +25,11 @@ const linear = new LinearClient({
 });
 
 const userStore = new Store<User>({
-  fetch: () => getUsers(linear),
+  fetch: (): Promise<User[]> => getUsers(linear),
   ttl: USER_CACHE_TTL,
 });
 const projectStore = new Store<Project>({
-  fetch: () => getProjects(linear),
+  fetch: (): Promise<Project[]> => getProjects(linear),
   ttl: PROJECTS_CACHE_TTL,
 });
 

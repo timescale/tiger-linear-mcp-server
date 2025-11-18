@@ -1,6 +1,6 @@
-import { Connection, LinearFetch, Project } from '@linear/sdk';
+import { Connection, LinearFetch } from '@linear/sdk';
 
-export const fetchAll = async <T extends Connection<any>>(
+export const fetchAll = async <T extends Connection<unknown>>(
   func: () => LinearFetch<T>,
 ): Promise<T extends Connection<infer U> ? U[] : never> => {
   let response = await func();

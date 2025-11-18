@@ -1,13 +1,7 @@
-import { ApiFactory } from '@tigerdata/mcp-boilerplate';
+import { ApiFactory, InferSchema } from '@tigerdata/mcp-boilerplate';
 import { z } from 'zod';
 import { ServerContext } from '../types.js';
 import { getUser, User, zUser } from '../utils/user.js';
-import { getTeam } from '../utils/team.js';
-import { getWorkflowState } from '../utils/workflowState.js';
-import { getProject } from '../utils/project.js';
-import { simplifyComment, Comment } from '../utils/comment.js';
-import { getIssueLabel } from '../utils/issueLabel.js';
-import { Attachment, simplifyAttachment } from '../utils/attachment.js';
 import { simplifyIssue, zIssue } from '../utils/issue.js';
 
 const inputSchema = {
@@ -33,9 +27,9 @@ export const getIssueFactory: ApiFactory<
     inputSchema,
     outputSchema,
   },
-  fn: async ({ key }) => {
+  fn: async ({ key }): Promise<InferSchema<typeof outputSchema>> => {
     const rawIssue = await linear.issue(key);
-    let involvedUserIds = new Set<string>();
+    const involvedUserIds = new Set<string>();
     const issue = await simplifyIssue(linear, involvedUserIds, rawIssue);
 
     const involvedUsers = (

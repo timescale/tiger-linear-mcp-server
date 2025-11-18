@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { ServerContext } from '../types.js';
 import { zUser } from '../utils/user.js';
 import { getIssues, zIssue } from '../utils/issue.js';
-import { ApiFactory } from '@tigerdata/mcp-boilerplate';
+import { ApiFactory, InferSchema } from '@tigerdata/mcp-boilerplate';
 import { getDateTimeFromDaysAgo } from '../utils/date.js';
 
 const inputSchema = {
@@ -36,13 +36,15 @@ export const getIssuesFactory: ApiFactory<
     inputSchema,
     outputSchema,
   },
-  fn: async ({ user_id, project_id, updated_after }) => {
-    const result = await getIssues(linear, {
+  fn: async ({
+    user_id,
+    project_id,
+    updated_after,
+  }): Promise<InferSchema<typeof outputSchema>> => {
+    return getIssues(linear, {
       userId: user_id,
       projectId: project_id,
       updatedAfter: updated_after || getDateTimeFromDaysAgo(7),
     });
-
-    return result;
   },
 });

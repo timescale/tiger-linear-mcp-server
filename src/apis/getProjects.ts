@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { ServerContext } from '../types.js';
 import { Project, zProject } from '../utils/project.js';
-import { ApiFactory } from '@tigerdata/mcp-boilerplate';
+import { ApiFactory, InferSchema } from '@tigerdata/mcp-boilerplate';
 
 const inputSchema = {
   keyword: z
@@ -31,7 +31,7 @@ export const getProjectsFactory: ApiFactory<
     inputSchema,
     outputSchema,
   },
-  fn: async ({ keyword }) => {
+  fn: async ({ keyword }): Promise<InferSchema<typeof outputSchema>> => {
     const allProjects = await projectStore.get();
 
     return {
