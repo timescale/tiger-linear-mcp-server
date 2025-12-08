@@ -17,7 +17,7 @@ const inputSchema = {
     .date()
     .nullable()
     .describe(
-      'Filter issues that have been updated at or after this date (ISO 8601 format). Defaults to 7 days ago.',
+      'Filter issues that have been updated at or after this date. Defaults to 7 days ago.',
     ),
 } as const;
 
