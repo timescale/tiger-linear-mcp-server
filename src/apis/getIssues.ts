@@ -6,14 +6,18 @@ import { ApiFactory, InferSchema } from '@tigerdata/mcp-boilerplate';
 import { getDateTimeFromDaysAgo } from '../utils/date.js';
 
 const inputSchema = {
-  user_id: z.string().nullable().describe('Filter issues by assignee user ID'),
-  project_id: z.string().nullable().describe('Filter issues by project ID'),
-  updated_after: z
+  user_id: z
     .string()
-    .datetime()
     .nullable()
     .describe(
-      'Filter issues that have been updated at or after this date (ISO 8601 format). Defaults to 7 days ago.',
+      'Filter issues by assignee user ID. Do not use in conjunction with username.',
+    ),
+  project_id: z.string().nullable().describe('Filter issues by project ID'),
+  updated_after: z.coerce
+    .date()
+    .nullable()
+    .describe(
+      'Filter issues that have been updated at or after this date. Defaults to 7 days ago.',
     ),
 } as const;
 
@@ -44,7 +48,7 @@ export const getIssuesFactory: ApiFactory<
     return getIssues(linear, {
       userId: user_id,
       projectId: project_id,
-      updatedAfter: updated_after || getDateTimeFromDaysAgo(7),
+      updatedAfter: updated_after?.toISOString() || getDateTimeFromDaysAgo(7),
     });
   },
 });
