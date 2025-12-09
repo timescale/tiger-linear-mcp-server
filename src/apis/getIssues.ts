@@ -20,6 +20,12 @@ const inputSchema = {
     .describe(
       'Filter issues that have been updated at or after this date. Defaults to 7 days ago.',
     ),
+  updated_before: z.coerce
+    .date()
+    .nullable()
+    .describe(
+      'Filter issues that have been updated at or before this date. Defaults to current time.',
+    ),
 } as const;
 
 const outputSchema = {
@@ -45,6 +51,7 @@ export const getIssuesFactory: ApiFactory<
     user_id,
     project_id,
     updated_after,
+    updated_before,
   }): Promise<InferSchema<typeof outputSchema>> => {
     if (!user_id && !project_id) {
       throw new Error('You must specify a user_id or a project_id.');
@@ -53,6 +60,7 @@ export const getIssuesFactory: ApiFactory<
       userId: user_id,
       projectId: project_id,
       updatedAfter: updated_after?.toISOString() || getDateTimeFromDaysAgo(7),
+      updatedBefore: updated_before?.toISOString() || new Date().toISOString(),
     });
   },
 });
