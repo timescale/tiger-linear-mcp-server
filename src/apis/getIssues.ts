@@ -9,10 +9,11 @@ const inputSchema = {
   user_id: z
     .string()
     .nullable()
-    .describe(
-      'Filter issues by assignee user ID. Do not use in conjunction with username.',
-    ),
-  project_id: z.string().nullable().describe('Filter issues by project ID'),
+    .describe('Filter issues by assignee user ID. Use this or project_id.'),
+  project_id: z
+    .string()
+    .nullable()
+    .describe('Filter issues by project ID. Use this or user_id.'),
   updated_after: z.coerce
     .date()
     .nullable()
@@ -45,6 +46,9 @@ export const getIssuesFactory: ApiFactory<
     project_id,
     updated_after,
   }): Promise<InferSchema<typeof outputSchema>> => {
+    if (!user_id && !project_id) {
+      throw new Error('You must specify a user_id or a project_id.');
+    }
     return getIssues(linear, {
       userId: user_id,
       projectId: project_id,
