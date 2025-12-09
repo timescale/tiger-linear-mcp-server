@@ -45,6 +45,9 @@ export const getIssuesFactory: ApiFactory<
     project_id,
     updated_after,
   }): Promise<InferSchema<typeof outputSchema>> => {
+    if (!user_id && !project_id) {
+      throw new Error('You must specify a user_id or a project_id.');
+    }
     return getIssues(linear, {
       userId: user_id,
       projectId: project_id,
