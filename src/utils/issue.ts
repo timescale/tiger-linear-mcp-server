@@ -35,6 +35,7 @@ export interface IssueFilters {
   userId: string | null;
   projectId: string | null;
   updatedAfter: string;
+  updatedBefore: string;
 }
 
 export interface GetIssuesResult {
@@ -46,14 +47,14 @@ export const getIssues = async (
   linear: LinearClient,
   filters: IssueFilters,
 ): Promise<GetIssuesResult> => {
-  const { userId, projectId, updatedAfter } = filters;
+  const { userId, projectId, updatedAfter, updatedBefore } = filters;
 
   const linearIssues = await fetchAll(() =>
     linear.issues({
       filter: {
         ...(userId ? { assignee: { id: { eq: userId } } } : {}),
         ...(projectId ? { project: { id: { eq: projectId } } } : {}),
-        updatedAt: { gte: updatedAfter },
+        updatedAt: { gte: updatedAfter, lte: updatedBefore },
       },
       first: 250,
     }),
