@@ -32,9 +32,12 @@ export const zIssue = z.object({
 export type Issue = z.infer<typeof zIssue>;
 
 export interface IssueFilters {
-  userId: string | null;
+  userIds: string[];
   projectId: string | null;
+  completedOnly?: boolean;
+  /** Start of the window; applies to completedAt when completedOnly is set. */
   updatedAfter: string;
+  /** End of the window; applies to completedAt when completedOnly is set. */
   updatedBefore: string;
 }
 
@@ -47,14 +50,18 @@ export const getIssues = async (
   linear: LinearClient,
   filters: IssueFilters,
 ): Promise<GetIssuesResult> => {
-  const { userId, projectId, updatedAfter, updatedBefore } = filters;
+  const { userIds, projectId, completedOnly, updatedAfter, updatedBefore } =
+    filters;
+  const window = { gte: updatedAfter, lte: updatedBefore };
 
   const linearIssues = await fetchAll(() =>
     linear.issues({
       filter: {
-        ...(userId ? { assignee: { id: { eq: userId } } } : {}),
+        ...(userIds.length ? { assignee: { id: { in: userIds } } } : {}),
         ...(projectId ? { project: { id: { eq: projectId } } } : {}),
-        updatedAt: { gte: updatedAfter, lte: updatedBefore },
+        ...(completedOnly
+          ? { state: { type: { eq: 'completed' } }, completedAt: window }
+          : { updatedAt: window }),
       },
       first: 250,
     }),
