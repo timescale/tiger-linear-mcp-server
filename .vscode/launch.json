@@ -7,15 +7,19 @@
       "request": "launch",
       "preLaunchTask": "Debug Linear MCP - Build Only",
       "program": "${workspaceFolder}/dist/index.js",
-      "args": ["http"],
+      "args": [
+        "http"
+      ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "env": {
         "NODE_ENV": "development",
-        "PORT": "5562"
+        "PORT": "5566"
       },
       "sourceMaps": true,
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
       "presentation": {
         "group": "mcp",
         "order": 1
@@ -27,14 +31,18 @@
       "request": "launch",
       "preLaunchTask": "Debug Linear MCP - Build Only",
       "program": "${workspaceFolder}/dist/index.js",
-      "args": ["stdio"],
+      "args": [
+        "stdio"
+      ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "env": {
         "NODE_ENV": "development"
       },
       "sourceMaps": true,
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
       "presentation": {
         "group": "mcp",
         "order": 2
