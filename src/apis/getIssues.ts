@@ -6,12 +6,6 @@ import { ApiFactory, InferSchema } from '@tigerdata/mcp-boilerplate';
 import { getDateTimeFromDaysAgo } from '../utils/date.js';
 
 const inputSchema = {
-  userId: z
-    .string()
-    .nullable()
-    .describe(
-      'Filter issues by assignee user ID. Use this, userIds or projectId.',
-    ),
   userIds: z
     .array(z.string())
     .nullable()
@@ -64,7 +58,6 @@ export const getIssuesFactory: ApiFactory<
     outputSchema,
   },
   fn: async ({
-    userId,
     userIds,
     projectId,
     completedOnly,
@@ -72,7 +65,7 @@ export const getIssuesFactory: ApiFactory<
     timestampEnd,
   }): Promise<InferSchema<typeof outputSchema>> => {
     const assigneeIds = [
-      ...new Set([...(userId ? [userId] : []), ...(userIds ?? [])]),
+      ...new Set(userIds ?? []),
     ];
     if (!assigneeIds.length && !projectId) {
       throw new Error('You must specify userId, userIds or projectId.');
