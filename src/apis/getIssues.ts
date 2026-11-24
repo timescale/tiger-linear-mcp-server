@@ -64,9 +64,7 @@ export const getIssuesFactory: ApiFactory<
     timestampStart,
     timestampEnd,
   }): Promise<InferSchema<typeof outputSchema>> => {
-    const assigneeIds = [
-      ...new Set(userIds ?? []),
-    ];
+    const assigneeIds = [...new Set(userIds ?? [])];
     if (!assigneeIds.length && !projectId) {
       throw new Error('You must specify userId, userIds or projectId.');
     }
